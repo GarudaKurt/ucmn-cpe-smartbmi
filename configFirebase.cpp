@@ -4,7 +4,6 @@
 #include <WiFi.h>
 #include <FirebaseESP32.h>
 
-// Firebase helpers
 #include <addons/TokenHelper.h>
 #include <addons/RTDBHelper.h>
 

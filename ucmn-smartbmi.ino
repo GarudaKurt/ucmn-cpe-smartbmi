@@ -6,6 +6,9 @@
 #include "MAX30105.h"
 #include "spo2_algorithm.h"
 
+#include "configFirebase.h"
+CONFIGFIREBASE conFirebase;
+
 // ===== TFT PINS =====
 #define TFT_MOSI 6
 #define TFT_SCLK 7
@@ -38,7 +41,6 @@ unsigned long lastSampleTime   = 0;
 unsigned long lastComputeTime  = 0;
 unsigned long lastTempReadTime = 0;
 unsigned long lastUIUpdate     = 0;
-unsigned long sendFirebaseDuration = 0;
 unsigned long prevTime = 0;
 
 const unsigned long SAMPLE_INTERVAL   = 10;
@@ -93,20 +95,17 @@ void drawAnimations() {
   tft.fillRect(ICON_X - 10, SPO2_Y - 5, 30, 30, GC9A01A_BLACK);
   tft.fillRect(ICON_X - 10, TEMP_Y - 5, 30, 30, GC9A01A_BLACK);
 
-  // ❤️ Heart
   int size = 3 + heartPulse;
   tft.fillCircle(ICON_X, HR_Y + 8, size, GC9A01A_RED);
   tft.fillCircle(ICON_X + 6, HR_Y + 8, size, GC9A01A_RED);
   tft.fillTriangle(ICON_X - 4, HR_Y + 8, ICON_X + 8, HR_Y + 8, ICON_X + 2, HR_Y + 20, GC9A01A_RED);
 
-  // 🫁 SpO2
   tft.drawCircle(ICON_X, SPO2_Y + 8, 6, GC9A01A_CYAN);
   tft.setTextColor(GC9A01A_CYAN);
   tft.setTextSize(1);
   tft.setCursor(ICON_X - 3, SPO2_Y + 4); tft.print("O");
   tft.setCursor(ICON_X + 5, SPO2_Y + 10); tft.print("2");
 
-  // 🌡️ Temp
   int bx = ICON_X - 3;
   int by = TEMP_Y;
   tft.drawRoundRect(bx, by, 6, 16, 3, GC9A01A_ORANGE);
@@ -114,8 +113,7 @@ void drawAnimations() {
   int mercury = 4 + (waveOffset * 2);
   tft.fillRect(bx + 1, by + 16 - mercury, 4, mercury, GC9A01A_ORANGE);
 
-  // Animate
-  heartPulse += heartGrow ? 1 : -1;
+   heartPulse += heartGrow ? 1 : -1;
   if (heartPulse > 2 || heartPulse < 0) heartGrow = !heartGrow;
   waveOffset = (waveOffset + 1) % 4;
 }
@@ -123,6 +121,8 @@ void drawAnimations() {
 void setup() {
   Serial.begin(115200);
 
+  conFirebase.initFirebase();
+  delay(1500);
   Wire.begin(SDA_PIN, SCL_PIN);
   SPI.begin(TFT_SCLK, -1, TFT_MOSI, TFT_CS);
   SPI.setFrequency(1000000);
@@ -144,7 +144,6 @@ void setup() {
 void loop() {
   unsigned long currentTime = millis();
 
-  // ---------------- SENSOR SAMPLING ----------------
   if (currentTime - lastSampleTime >= SAMPLE_INTERVAL) {
     lastSampleTime = currentTime;
     if (particleSensor.available()) {
@@ -156,7 +155,6 @@ void loop() {
     } else particleSensor.check();
   }
 
-  // ---------------- SPO2 + HR + Temperature
   if (bufferReady && currentTime - lastComputeTime >= COMPUTE_INTERVAL) {
     lastComputeTime = currentTime;
 
@@ -185,5 +183,12 @@ void loop() {
     lastUIUpdate = currentTime;
     updateValues();
     drawAnimations();
+  }
+
+  if(currentTime - prevTime >= 5000) {
+    prevTime = currentTime;
+    if(!conFirebase.WiFiError()) {
+      conFirebase.sendFirebaseData(heartRate, spo2, temperature);
+    }
   }
 }
