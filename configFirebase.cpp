@@ -8,7 +8,7 @@
 #include <addons/RTDBHelper.h>
 
 #define WIFI_SSID "cpesmartbmi"
-#define WIFI_PASSWORD "smartbmi"
+#define WIFI_PASSWORD "cpesmartbmi"
 
 #define API_KEY "AIzaSyAsVPYxgzlkA0HgokO_6Pbb0E_hBVJoUV4"
 #define DATABASE_URL "https://bmi-machine-6026b-default-rtdb.firebaseio.com"
@@ -25,7 +25,6 @@ static int retries = 0;
 unsigned long sendDataPrevMillis = 0;
 
 CONFIGFIREBASE::CONFIGFIREBASE() {}
-CONFIGFIREBASE::~CONFIGFIREBASE() {}
 
 void CONFIGFIREBASE::initFirebase() {
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
