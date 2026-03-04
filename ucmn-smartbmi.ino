@@ -185,10 +185,7 @@ void loop() {
     drawAnimations();
   }
 
-  if(currentTime - prevTime >= 5000) {
-    prevTime = currentTime;
-    if(!conFirebase.WiFiError()) {
-      conFirebase.sendFirebaseData(heartRate, spo2, temperature);
-    }
-  }
+  if(!conFirebase.WiFiError()) {
+    conFirebase.sendFirebaseData(heartRate, spo2, temperature);
+  
 }

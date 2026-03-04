@@ -10,11 +10,11 @@
 #define WIFI_SSID "cpesmartbmi"
 #define WIFI_PASSWORD "smartbmi"
 
-#define API_KEY "AIzaSyCHeqVIPxksNZsPYK_0a3hQ7lI9Xk7POFI"
-#define DATABASE_URL "https://ucmn-cpe-smartbmi-default-rtdb.firebaseio.com"
+#define API_KEY "AIzaSyAsVPYxgzlkA0HgokO_6Pbb0E_hBVJoUV4"
+#define DATABASE_URL "https://bmi-machine-6026b-default-rtdb.firebaseio.com"
 
 #define USER_EMAIL "admin@gmail.com"
-#define USER_PASSWORD "admin123"
+#define USER_PASSWORD "qwerty123"
 
 FirebaseData fbdo;
 FirebaseAuth auth;
@@ -67,13 +67,13 @@ void CONFIGFIREBASE::sendFirebaseData(float hr, float spo2, float temp) {
     if (hr < 0 ||  spo2 < 0 || temp < 0) return;
 
     Serial.printf("Set Heart Rate... %s\n",
-      Firebase.setFloat(fbdo, "/monitoring/hr", hr) ? "ok" : fbdo.errorReason().c_str());
+      Firebase.setFloat(fbdo, "/monitoring/hearate", hr) ? "ok" : fbdo.errorReason().c_str());
 
     Serial.printf("Set SpO2... %s\n",
       Firebase.setFloat(fbdo, "/monitoring/spo2", spo2) ? "ok" : fbdo.errorReason().c_str());
 
     Serial.printf("Set Temp... %s\n",
-      Firebase.setFloat(fbdo, "/monitoring/temp", temp) ? "ok" : fbdo.errorReason().c_str());
+      Firebase.setFloat(fbdo, "/monitoring/temperature", temp) ? "ok" : fbdo.errorReason().c_str());
   }
 }
 
