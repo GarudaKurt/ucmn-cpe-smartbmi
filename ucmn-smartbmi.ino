@@ -10,15 +10,11 @@
 CONFIGFIREBASE conFirebase;
 
 // ===== TFT PINS =====
-#define TFT_MOSI 6
-#define TFT_SCLK 7
-#define TFT_CS   10
-#define TFT_DC   5
+#define TFT_MOSI 23 //SDA
+#define TFT_SCLK 18 //SCl
+#define TFT_CS   5
+#define TFT_DC   15
 #define TFT_RST  4
-
-// ===== I2C PINS =====
-#define SDA_PIN 8
-#define SCL_PIN 9
 
 Adafruit_GC9A01A tft(TFT_CS, TFT_DC, TFT_RST);
 
@@ -123,7 +119,6 @@ void setup() {
 
   conFirebase.initFirebase();
   delay(1500);
-  Wire.begin(SDA_PIN, SCL_PIN);
   SPI.begin(TFT_SCLK, -1, TFT_MOSI, TFT_CS);
   SPI.setFrequency(1000000);
 
@@ -187,5 +182,5 @@ void loop() {
 
   if(!conFirebase.WiFiError()) {
     conFirebase.sendFirebaseData(heartRate, spo2, temperature);
-  
+  }
 }

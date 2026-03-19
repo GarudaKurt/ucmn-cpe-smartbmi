@@ -60,7 +60,7 @@ void CONFIGFIREBASE::initFirebase() {
 }
 
 void CONFIGFIREBASE::sendFirebaseData(float hr, float spo2, float temp) {
-  if (Firebase.ready() && (millis() - sendDataPrevMillis > 15000 || sendDataPrevMillis == 0)) {
+  if (Firebase.ready() && (millis() - sendDataPrevMillis > 3000 || sendDataPrevMillis == 0)) {
     sendDataPrevMillis = millis();
 
     if (hr < 0 ||  spo2 < 0 || temp < 0) return;
